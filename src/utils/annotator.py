@@ -15,61 +15,6 @@ def rect_intersection(a, b):
     return x1 < x2 and y1 < y2
 
 
-# def annotate_from_df(blocks_df, pdf_path, pdf_bytes, output_path):
-#     pdf = fitz.open(str(pdf_path))
-#     images = convert_from_bytes(pdf_bytes)
-
-#     output_path.mkdir(exist_ok=True, parents=True)
-
-#     for page_index, (page, image) in enumerate(zip(pdf.pages(), images)):
-#         # if page_index != 3:
-#         #     continue
-
-#         draw = ImageDraw.Draw(image, "RGBA")
-
-#         page_w = page.rect[2]
-#         page_h = page.rect[3]
-
-#         pdf_drawings = page.get_drawings()
-#         scaled_drawings = [
-#             scale_rect(
-#                 from_size=(page_w, page_h),
-#                 from_rect=drawing["rect"],
-#                 to_size=image.size,
-#             )
-#             for drawing in pdf_drawings
-#         ]
-#         scaled_bboxes = [
-#             scale_rect(
-#                 from_size=(page_w, page_h),
-#                 from_rect=row["bbox"],
-#                 to_size=image.size,
-#             )
-#             for i, row in blocks_df[blocks_df.page == page_index].iterrows()
-#         ]
-#         for scaled_drawing in scaled_drawings:
-#             draw.rectangle(
-#                 scaled_drawing, outline="blue", fill=(0, 0, 255, 80), width=1
-#             )
-#         for scaled_bbox in scaled_bboxes:
-#             draw.rectangle(scaled_bbox, outline="red", width=2)
-
-#         # for bbox in scaled_bboxes:
-#         #     if any(
-#         #         [
-#         #             rect_intersection(bbox, drawing_rect)
-#         #             for drawing_rect in scaled_drawings
-#         #         ]
-#         #     ):
-#         #         draw.rectangle(bbox, outline="green", fill=(0, 255, 0, 80), width=1)
-#         #     else:
-#         #         draw.rectangle(bbox, outline="red", width=2)
-
-#         image.save(output_path / f"{page_index}.png", "PNG")
-
-#     return output_path
-
-
 def annotate_from_bytes(pdf_bytes, output_path):
     pdf = fitz.open(stream=pdf_bytes)
     images = convert_from_bytes(pdf_bytes)
