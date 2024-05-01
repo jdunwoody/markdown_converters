@@ -7,7 +7,6 @@ from pprint import pformat
 import utils.annotator as annotator
 import fitz
 import pandas as pd
-from structural_chunking.markdown import custom_markdown, orig_markdown
 
 
 @dataclass
@@ -293,21 +292,6 @@ def export_misc(output_base, misc_df):
     misc_df.to_csv(misc_path, index=None, quoting=csv.QUOTE_ALL)
 
 
-def export_orig_markdown(output_base, pdf):
-    md_text = custom_markdown.to_markdown(pdf)
-
-    (output_base / "export.md").write_text(md_text)
-
-
-def export_orig_markdown(output_base, pdf):
-    # from pdf4llm import to_markdown
-    from structural_chunking.markdown.orig_markdown import to_markdown
-
-    md_text = orig_markdown.to_markdown(pdf)
-
-    (output_base / "orig_export.md").write_text(md_text)
-
-
 def load_misc(pdf):
     misc_data = {
         "id_pdf": pdf.is_pdf,
@@ -344,16 +328,6 @@ def process_file(input_path):
 
     output_base = Path(__file__).parents[2] / "output" / input_path
     output_base.mkdir(parents=True, exist_ok=True)
-
-    should_export_orig_markdown = True
-
-    if should_export_orig_markdown:
-        export_orig_markdown(output_base, pdf)
-
-    # should_export_markdown = True
-
-    # if should_export_markdown:
-    #     export_markdown(output_base, pdf)
 
     should_export_blocks = True
 
