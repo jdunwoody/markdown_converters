@@ -1,0 +1,6 @@
+venv
+data
+eval
+.DS_Store
+output
+__pycache__

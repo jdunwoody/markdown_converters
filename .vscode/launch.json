@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "annotator",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/utils/annotator.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "doc",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/doc/main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "powerpoint",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/powerpoint/main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "simple_markdown",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/pdf/markdown/simple_markdown.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "main",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/pdf/main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "custom_markdown",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/pdf/markdown/custom_markdown.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}
