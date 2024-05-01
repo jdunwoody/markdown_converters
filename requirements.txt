@@ -7,11 +7,11 @@ PyMuPDF
 pdf2image
 Pillow
 tqdm
-pdf4llm
+# pdf4llm
 
 
 python-pptx
-docx2txt
+# docx2txt
 python-docx 
 
 # textract
