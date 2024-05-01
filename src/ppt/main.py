@@ -1,6 +1,4 @@
-import os
 from pptx import Presentation
-from pptx.util import Pt
 from pathlib import Path
 
 
@@ -93,11 +91,16 @@ def to_markdown(input_file):
 
 
 def _main():
-    data_dir = Path(__file__).parents[2] / "data"
-    output = to_markdown(input_file=data_dir / "sample.pptx")
+    base_dir = Path(__file__).parents[2]
+    data_dir = base_dir / "data"
+    input_file = data_dir / "sample.pptx"
 
-    output_dir = Path(__file__).parents[2] / "output"
-    output_dir.write_text(output)
+    output = to_markdown(input_file=input_file)
+
+    output_dir = base_dir / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / f"{input_file.name}.md"
+    output_file.write_text(output)
 
 
 if __name__ == "__main__":

@@ -19,32 +19,18 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "powerpoint",
+            "name": "ppt",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/powerpoint/main.py",
+            "program": "src/ppt/main.py",
             "console": "integratedTerminal"
         },
         {
-            "name": "simple_markdown",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/pdf/markdown/simple_markdown.py",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "main",
+            "name": "pdf",
             "type": "debugpy",
             "request": "launch",
             "program": "src/pdf/main.py",
             "console": "integratedTerminal"
         },
-        {
-            "name": "custom_markdown",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/pdf/markdown/custom_markdown.py",
-            "console": "integratedTerminal"
-        }
     ]
 }

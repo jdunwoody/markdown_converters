@@ -3,7 +3,6 @@ from pathlib import Path
 from collections import Counter
 
 import fitz
-import pandas as pd
 
 
 @dataclass
@@ -114,8 +113,8 @@ def calculate_heading_levels(score_counter):
     return level_for_score
 
 
-def _main(input_filename, output_path):
-    doc = fitz.open(input_filename)
+def to_markdown(input_file):
+    doc = fitz.open(input_file)
 
     score_counter = Counter()
 
@@ -131,17 +130,21 @@ def _main(input_filename, output_path):
 
     rendered = "\n".join(rendered_lines)
 
-    (output_path / f"{input_filename.name}.md").write_text(rendered)
+    return rendered
 
-    return pages
+
+def _main():
+    base_dir = Path(__file__).parents[2]
+    data_dir = base_dir / "data"
+    input_file = data_dir / "JPM Electravision 14th Annual Energy Paper 20240305.pdf"
+
+    output = to_markdown(input_file=input_file)
+
+    output_dir = base_dir / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / f"{input_file.name}.md"
+    output_file.write_text(output)
 
 
 if __name__ == "__main__":
-    data_path = Path(__file__).parents[3] / "data"
-    output_path = Path(__file__).parents[3] / "output"
-
-    _main(
-        input_filename=data_path
-        / "JPM Electravision 14th Annual Energy Paper 20240305.pdf",
-        output_path=output_path,
-    )
+    _main()

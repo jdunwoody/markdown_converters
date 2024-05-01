@@ -9,7 +9,12 @@ from docx import Document
 # text = docx2txt.process(input_file)
 
 
-def header_to_markdown(header): ...
+def header_to_markdown(header):
+    lines = []
+    for paragraph in header.paragraphs:
+        lines.append(paragraph.text)
+
+    return lines
 
 
 def to_markdown(input_file):
@@ -20,8 +25,7 @@ def to_markdown(input_file):
         lines.append(paragraph.text)
 
     for section in document.sections:
-        header_to_markdown(section.header)
-        lines.append(section.header)
+        lines += header_to_markdown(section.header)
         for section_inner in section.iter_inner_content():
             print(section_inner.text)
 
@@ -38,7 +42,7 @@ def _main():
 
     print(output)
 
-    output_dir = Path(__file__).parents[2] / "output" / f"{input_filename.name}.text"
+    output_dir = Path(__file__).parents[2] / "output" / f"{input_filename.name}.md"
     output_dir.write_text(output)
 
 
