@@ -18,7 +18,19 @@ from docx.text.parfmt import ParagraphFormat
 def header_to_markdown(header):
     lines = []
     for paragraph in header.paragraphs:
-        lines.append(paragraph.text)
+        if len(paragraph.text.strip()) == 0:
+            continue
+        lines.append(f"HEADER: {paragraph.text}")
+
+    return lines
+
+
+def footer_to_markdown(footer):
+    lines = []
+    for paragraph in footer.paragraphs:
+        if len(paragraph.text.strip()) == 0:
+            continue
+        lines.append(f"FOOTER: {paragraph.text}")
 
     return lines
 
@@ -27,7 +39,21 @@ def to_markdown(input_file):
     document = Document(input_file)
 
     lines = []
-    for paragraph in document.paragraphs:
+
+    for i, section in enumerate(document.sections):
+        lines.append(f"# SECTION {i+1}")
+
+        lines += header_to_markdown(section.header)
+
+        for section_inner in section.iter_inner_content():
+            if len(section_inner.text.strip()) == 0:
+                continue
+            lines.append(section_inner.text)
+
+        lines += footer_to_markdown(section.footer)
+
+    for i, paragraph in enumerate(document.paragraphs):
+        lines.append(f"# PARAGRAPH {i+1}")
         for content in paragraph.iter_inner_content():
             font_sizes = []
             if isinstance(content, Run):
@@ -51,11 +77,6 @@ def to_markdown(input_file):
         font_size = paragraph.style.font.size
         lines.append(f"{font_size}: {paragraph.text}")
 
-    for section in document.sections:
-        lines += header_to_markdown(section.header)
-        for section_inner in section.iter_inner_content():
-            print(section_inner.text)
-
     for table in document.tables:
         lines.append(table.text)
 
@@ -66,8 +87,6 @@ def _main():
     data_dir = Path(__file__).parents[2] / "data"
     input_filename = data_dir / "sample.docx"
     output = to_markdown(input_file=input_filename)
-
-    print(output)
 
     output_dir = Path(__file__).parents[2] / "output" / f"{input_filename.name}.md"
     output_dir.write_text(output)
