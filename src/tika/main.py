@@ -28,7 +28,7 @@ def _main():
 
         output_dir = base_dir / "output" / "tika"
         output_dir.mkdir(parents=True, exist_ok=True)
-        output_file = output_dir / f"{input_file.name}.xml"
+        output_file = output_dir / f"{input_file.name}.html"
         output_file.write_text(output)
 
 
