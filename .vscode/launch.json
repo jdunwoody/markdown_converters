@@ -19,6 +19,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "tika",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/tika/main.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "ppt",
             "type": "debugpy",
             "request": "launch",

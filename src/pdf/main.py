@@ -142,7 +142,7 @@ def _main():
 
     output_dir = base_dir / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / f"{input_file.name}.md"
+    output_file = output_dir / f"{input_file.name}.tika.md"
     output_file.write_text(output)
 
 

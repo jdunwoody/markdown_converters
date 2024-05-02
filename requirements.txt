@@ -15,4 +15,4 @@ python-pptx
 python-docx 
 
 # textract
-# tika
+tika
