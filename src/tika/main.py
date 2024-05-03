@@ -4,10 +4,10 @@ import re
 from tqdm import tqdm
 
 from tika import parser
-from html.parser import HTMLParser
 from markdownify import markdownify
-import xml.sax
 from bs4 import BeautifulSoup
+
+from utils import text_skipping
 
 
 def to_html(input_file):
@@ -24,21 +24,27 @@ def to_markdown(html):
     return markdown
 
 
+def trim_tag(tag):
+    if tag is None:
+        return False
+    return not tag.contents and not tag.name == "br"
+
+
 def clean_html(html):
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, features="lxml")
     # soup.smooth()
 
-    # findtoure = clean.find_all(text=re.compile("Gnegneri Toure Yaya"))
-    # fixed_comments = []
-    # for comment in findtoure:
-    #     fixed_text = comment.replace("Gnegneri Toure Yaya", "Yaya Toure")
-    #     comment.replace_with(fixed_text)
-    #     fixed_comments.append(fixed_text)
+    p = soup.find_all("p")
 
-    a = soup.find_all("p", string=re.compile(r"\w{,3}"))
-    # .replace_with(
-    #     "***********************************"
-    # )
+    for x in soup.find_all():
+        text = x.text.strip()
+
+        if text_skipping.should_skip(text):
+            # delete this tag
+            x.decompose()
+        else:
+            text = text.replace("\n", " ")
+            x.string = text
 
     clean = soup.prettify("utf-8")
 
