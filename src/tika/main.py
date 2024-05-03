@@ -24,19 +24,13 @@ def to_markdown(html):
     return markdown
 
 
-def trim_tag(tag):
-    if tag is None:
-        return False
-    return not tag.contents and not tag.name == "br"
-
-
 def clean_html(html):
-    soup = BeautifulSoup(html, features="lxml")
-    # soup.smooth()
-
-    p = soup.find_all("p")
+    soup = BeautifulSoup(html, features="lxml", preserve_whitespace_tags=["p"])
 
     for x in soup.find_all():
+        if x.name in ["html", "body", "head", "meta"]:
+            continue
+
         text = x.text.strip()
 
         if text_skipping.should_skip(text):
@@ -44,11 +38,13 @@ def clean_html(html):
             x.decompose()
         else:
             text = text.replace("\n", " ")
-            x.string = text
 
-    clean = soup.prettify("utf-8")
+        x.string = text
 
-    return clean
+    soup.smooth()
+    # clean = soup.prettify("utf-8", formatter="minimal")
+
+    return str(soup)
 
 
 def _main():
@@ -70,6 +66,7 @@ def _main():
         output_dir.mkdir(parents=True, exist_ok=True)
         (output_dir / f"{input_file.name}.md").write_text(markdown)
         (output_dir / f"{input_file.name}.html").write_text(html)
+        (output_dir / f"{input_file.name}.raw.html").write_text(html)
 
 
 if __name__ == "__main__":
