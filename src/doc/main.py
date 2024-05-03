@@ -1,18 +1,12 @@
-import os
-from pptx import Presentation
-from pptx.util import Pt
+from collections import Counter
 from pathlib import Path
+from pprint import pprint
+
+from docx import Document
+from docx.text.hyperlink import Hyperlink
 from docx.text.run import Run
 
-# import docx2txt
-from docx import Document
-from docx.shared import StoryChild
-from docx.styles.style import ParagraphStyle
-from docx.text.hyperlink import Hyperlink
-from docx.text.pagebreak import RenderedPageBreak
-from docx.text.parfmt import ParagraphFormat
-
-# text = docx2txt.process(input_file)
+from utils import text_skipping
 
 
 def header_footer_to_markdown(header_footer, style_to_prefix):
@@ -70,6 +64,8 @@ def to_markdown(input_file):
         "Header & Footer": "### ",
     }
 
+    skip_counter = Counter()
+
     for i, section in enumerate(document.sections):
         # lines.append(f"# SECTION {i+1}")
 
@@ -80,6 +76,11 @@ def to_markdown(input_file):
                 continue
 
             text = section_inner.text.replace("\n", " ")
+
+            if text_skipping.should_skip(text):
+                skip_counter[text] += 1
+                continue
+
             lines.append(f"{style_to_prefix[section_inner.style.name]}{text}")
 
         lines += header_footer_to_markdown(section.footer, style_to_prefix)
@@ -88,6 +89,8 @@ def to_markdown(input_file):
 
     if should_use_paragraphs:
         lines += paragraph_to_markdown(document)
+
+    pprint(skip_counter)
 
     return "\n\n".join(lines)
 

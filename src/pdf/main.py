@@ -1,8 +1,9 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from collections import Counter
-
 import fitz
+from pprint import pprint
+from utils import text_skipping
 
 
 @dataclass
@@ -28,7 +29,7 @@ class Page:
     blocks: list[Block] = field(default_factory=list)
 
 
-def parse_page(page, score_counter) -> Page:
+def parse_page(page, score_counter, skip_counter) -> Page:
     max_score = None
     min_score = None
     scores = set()
@@ -72,6 +73,10 @@ def parse_page(page, score_counter) -> Page:
 
             if current_line is None or current_line.score != line_score:
                 current_line = Line(score=line_score, spans=spans)
+                if text_skipping.should_skip(text):
+                    skip_counter[text] += 1
+                    continue
+
                 lines.append(current_line)
 
             else:
@@ -83,13 +88,17 @@ def parse_page(page, score_counter) -> Page:
     return Page(blocks=blocks, scores=list(sorted(scores, reverse=True)))
 
 
-def render(page: Page, level_for_score: dict):
+def render(page: Page, level_for_score: dict, skip_counter: Counter):
     results = []
 
     # most common font size == body (no #)
     for block in page.blocks:
         for line in block.lines:
-            text = " ".join([span.text for span in line.spans])
+            text = " ".join([span.text for span in line.spans]).strip()
+
+            if text_skipping.should_skip(text):
+                skip_counter[text] += 1
+                continue
 
             prefix = level_for_score[line.score]
 
@@ -123,12 +132,15 @@ def to_markdown(input_file):
     level_for_score = calculate_heading_levels(score_counter)
 
     rendered_lines = []
+    skip_counter = Counter()
 
     for page_index, page in enumerate(pages):
-        rendered_lines.append(f"PAGE {page_index +1}")
-        rendered_lines += render(page, level_for_score)
+        # rendered_lines.append(f"PAGE {page_index +1}")
+        rendered_lines += render(page, level_for_score, skip_counter=skip_counter)
 
     rendered = "\n".join(rendered_lines)
+
+    pprint(skip_counter.most_common())
 
     return rendered
 
@@ -142,7 +154,7 @@ def _main():
 
     output_dir = base_dir / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / f"{input_file.name}.tika.md"
+    output_file = output_dir / f"{input_file.name}.md"
     output_file.write_text(output)
 
 

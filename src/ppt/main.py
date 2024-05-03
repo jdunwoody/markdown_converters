@@ -1,5 +1,10 @@
-from pptx import Presentation
+from collections import Counter
 from pathlib import Path
+from pprint import pprint
+
+from pptx import Presentation
+
+from utils import text_skipping
 
 
 def calculate_col_char_widths(table):
@@ -58,6 +63,7 @@ def to_markdown(input_file):
     presentation = Presentation(input_file)
 
     lines = []
+    skip_counter = Counter()
 
     for presentation_i, slide in enumerate(presentation.slides):
         lines.append(f"Slide number: {presentation_i+1}")
@@ -69,7 +75,13 @@ def to_markdown(input_file):
         for shape in slide.shapes:
             if shape.has_text_frame:
                 for paragraph in shape.text_frame.paragraphs:
-                    lines.append(paragraph.text)
+                    text = paragraph.text
+
+                    if text_skipping.should_skip(text):
+                        skip_counter[text] += 1
+                        continue
+
+                    lines.append(text)
 
             # | Syntax      | Description |
             # | ----------- | ----------- |
@@ -86,6 +98,8 @@ def to_markdown(input_file):
             # print(placeholder.has_chart)
 
         lines += "\n"
+
+    pprint(skip_counter)
 
     return "\n".join(lines)
 
