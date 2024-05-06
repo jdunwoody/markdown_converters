@@ -12,39 +12,49 @@ from utils import text_skipping
 
 def to_html(input_file):
     parsed = parser.from_file(str(input_file), xmlContent=True)
-    # metadata = parsed["metadata"]
     result = parsed["content"]
 
     return result
-
-
-def to_markdown(html):
-    markdown = markdownify(html, strip=["meta"])
-
-    return markdown
 
 
 def clean_html(html):
     soup = BeautifulSoup(html, features="lxml", preserve_whitespace_tags=["p"])
 
     for x in soup.find_all():
-        if x.name in ["html", "body", "head", "meta"]:
-            continue
+        # if x.name in ["html", "body", "head", "meta", "div"]:
+        #     continue
 
         text = x.text.strip()
 
         if text_skipping.should_skip(text):
+            # if (
+            #     x.text.startswith("0")
+            # or x.name == "div"
+            # and "page" in x.attrs["class"]
+            # or text_skipping.should_skip(text)
+            # ):
             # delete this tag
             x.decompose()
-        else:
-            text = text.replace("\n", " ")
+        # else:
+        # text = text.replace("\n", " ")
+        # x.string = text
 
-        x.string = text
+    # for x in soup.find_all():
+    #     text = x.text.strip()
+    #     x.string = text
 
     soup.smooth()
-    # clean = soup.prettify("utf-8", formatter="minimal")
+    clean = soup.prettify()  # "utf-8", formatter="minimal")
 
-    return str(soup)
+    # clean = str(clean)
+
+    return clean
+
+
+def to_markdown(html):
+    markdown = markdownify(html, strip=["meta"])
+
+    return markdown
 
 
 def _main():
@@ -65,7 +75,7 @@ def _main():
         output_dir = base_dir / "output" / "tika"
         output_dir.mkdir(parents=True, exist_ok=True)
         (output_dir / f"{input_file.name}.md").write_text(markdown)
-        (output_dir / f"{input_file.name}.html").write_text(html)
+        (output_dir / f"{input_file.name}.html").write_text(cleaned_html)
         (output_dir / f"{input_file.name}.raw.html").write_text(html)
 
 
